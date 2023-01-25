@@ -16,18 +16,6 @@ steps:
       Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
     displayName: Show Workdir content
       
-  - task: AzureResourceManagerTemplateDeployment@3
-    displayName: 'AzureResourceManagerTemplateDeployment'
-    inputs:
-      azureResourceManagerConnection: 'VSEnterprise'
-      resourceGroupName: 'rg-test-template-spec'
-      location: 'West Europe'
-      csmFile: 'main.bicep'
-      deploymentMode: 'Incremental'
-      deploymentScope: 'Resource Group'
-      deploymentName: 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
-    continueOnError: true
-
   - task: AzurePowerShell@5
     inputs:
       azureSubscription: 'VSEnterprise'
@@ -51,28 +39,24 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
 
-        New-AzResourceGroupDeployment `
-          -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
-          -ResourceGroupName 'rg-test-template-spec' `
-          -TemplateFile '$(Build.SourcesDirectory)/main.bicep' 
-
-    displayName: 'ps az cli '
-    continueOnError: true
-
-  - task: AzureCLI@2
-    inputs:
-      azureSubscription: 'VSEnterprise'
-      scriptType: ps
-      scriptLocation: inlineScript
-      inlineScript: |
-
           Write-Host("Deploy")
           az deployment group create -g 'rg-test-template-spec' `
               --mode Incremental `
               --template-file '$(Build.SourcesDirectory)/main.bicep'  `
               --name 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
 
-      displayName: 'az cli '
-      continueOnError: true
+    displayName: 'az cli '
+    continueOnError: true
 
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: 'AzureResourceManagerTemplateDeployment'
+    inputs:
+      azureResourceManagerConnection: 'VSEnterprise'
+      resourceGroupName: 'rg-test-template-spec'
+      location: 'West Europe'
+      csmFile: 'main.bicep'
+      deploymentMode: 'Incremental'
+      deploymentScope: 'Resource Group'
+      deploymentName: 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
+    continueOnError: true
   
