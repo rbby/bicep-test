@@ -39,7 +39,7 @@ steps:
         New-AzResourceGroupDeployment `
           -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
           -ResourceGroupName 'rg-test-template-spec' `
-          -TemplateFile 'main.bicep' 
+          -TemplateFile '$(Build.SourcesDirectory)/main.bicep' 
 
     displayName: 'ps deploy'
     continueOnError: true
