@@ -1,4 +1,5 @@
 # Starter pipeline
+
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
@@ -17,3 +18,21 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
   displayName: 'Run a multi-line script'
+
+- task: AzureResourceManagerTemplateDeployment@3
+
+  inputs:
+    deploymentScope: 'Resource Group'
+    azureResourceManagerConnection: 'Visual Studio Enterprise Subscription(4d8dab80-ec9f-4a59-86d3-714d61a261a4)'
+    subscriptionId: '4d8dab80-ec9f-4a59-86d3-714d61a261a4'
+    action: 'Create Or Update Resource Group'
+    resourceGroupName: 'rg-test-template-spec'
+    location: 'West Europe'
+    templateLocation: 'Linked artifact'
+    csmFile: 'main.bicep'
+    deploymentMode: 'Incremental'
+    addSpnToEnvironment:
+- task: AzurePowerShell@5
+  inputs:
+    azureSubscription: 'Visual Studio Enterprise Subscription(4d8dab80-ec9f-4a59-86d3-714d61a261a4)'
+    ScriptType: 'InlineScript'
