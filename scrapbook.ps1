@@ -6,9 +6,8 @@ Get-ExecutionPolicy -List
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
-Connect-AzAccount -TenantId '9e3ee5fe-3a99-45db-ac6e-691e86febef3' -Subscription 'pggm-spokes-o'
+Connect-AzAccount
 Get-AzSubscription
-Set-AzContext -Subscription 'pggm-spokes-o'
 Disconnect-AzAccount
 Clear-AzContext -Force
 
@@ -31,12 +30,7 @@ $pe.Id
 $pe = Get-AzTemplateSpec -ResourceGroupName $rgRecipesName -Name "data-storage"
 $pe.Id
 
-# set lock
-Set-AzResourceLock -LockLevel CanNotDelete -LockNotes "Storage may not be deleted." `
-  -LockName "Delete" `
-  -ResourceName "pggmrobbytestsasao" `
-  -ResourceType "Microsoft.Storage/storageAccounts" `
-  -ResourceGroupName "rg-robby-test-sa-o"
+
 
 
 # Test Deploy
