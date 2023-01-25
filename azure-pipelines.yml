@@ -30,7 +30,7 @@ steps:
 
   - task: AzurePowerShell@5
     inputs:
-      azureSubscription: ${{ parameters.AzureDevOpsServiceConnection }}
+      azureSubscription: 'VSEnterprise'
       ScriptType: 'InlineScript'
       azurePowerShellVersion: 'LatestVersion'
       pwsh: false
@@ -44,41 +44,35 @@ steps:
     displayName: 'ps deploy'
     continueOnError: true
     
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: ${{ parameters.AzureDevOpsServiceConnection }}
-        scriptType: ps
-        scriptLocation: inlineScript
-        inlineScript: |
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'VSEnterprise'
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: |
 
-          New-AzResourceGroupDeployment `
-            -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
-            -ResourceGroupName 'rg-test-template-spec' `
-            -TemplateFile '${{ parameters.WorkDir }}/$(deploymentFileName)' `
-            -TemplateParameterFile '${{ parameters.DeploymentParametersFilePath }}' 
+        New-AzResourceGroupDeployment `
+          -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
+          -ResourceGroupName 'rg-test-template-spec' `
+          -TemplateFile '$(Build.SourcesDirectory)/main.bicep' 
 
-      displayName: 'ps az cli ${{ parameters.DisplaynamePrefix }}ARM Template deployment ${{ parameters.DeploymentFilePath }}'
-      continueOnError: true
+    displayName: 'ps az cli '
+    continueOnError: true
 
-    - task: AzureCLI@2
-      inputs:
-        azureSubscription: ${{ parameters.AzureDevOpsServiceConnection }}
-        scriptType: ps
-        scriptLocation: inlineScript
-        inlineScript: |
-
-          $RG_NAME = '${{ parameters.AzureResourceGroup }}'
-          $TEMPLATE_FILE  = '${{ parameters.WorkDir }}/$(deploymentFileName)'
-          $PARAMETER_FILE = '${{ parameters.DeploymentParametersFilePath }}'
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: 'VSEnterprise'
+      scriptType: ps
+      scriptLocation: inlineScript
+      inlineScript: |
 
           Write-Host("Deploy")
-          az deployment group create -g $RG_NAME `
+          az deployment group create -g 'rg-test-template-spec' `
               --mode Incremental `
-              --template-file $TEMPLATE_FILE `
-              --parameters $PARAMETER_FILE `
+              --template-file '$(Build.SourcesDirectory)/main.bicep'  `
               --name 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
 
-      displayName: 'az cli ${{ parameters.DisplaynamePrefix }}ARM Template deployment ${{ parameters.DeploymentFilePath }}'
+      displayName: 'az cli '
       continueOnError: true
 
   
