@@ -3,11 +3,11 @@
       "ts": {
         "ingredients": {
           "subscription": "4d8dab80-ec9f-4a59-86d3-714d61a261a4",
-          "resourceGroup": "rg-ingredients-o"
+          "resourceGroup": "rg-test-template-spec"
         },
         "recepies": {
           "subscription": "4d8dab80-ec9f-4a59-86d3-714d61a261a4",
-          "resourceGroup": "rg-recipes-o"
+          "resourceGroup": "rg-test-template-spec"
         }
       }
     }

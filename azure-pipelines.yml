@@ -11,64 +11,39 @@ pool:
   vmImage: windows-latest
 
 steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
 
   - powershell: |
-      Write-Output("TemplateFile ${{ parameters.WorkDir }}/$(deploymentFileName)")
-      Write-Output("TemplateParameterFile ${{ parameters.DeploymentParametersFilePath }}")
       Get-ChildItem -Path $(Pipeline.Workspace) -Recurse
-      #Get-ChildItem -Path ${{ parameters.WorkDir }} -Recurse
-      
-    condition: eq(variables['System.debug'], 'true')
     displayName: Show Workdir content
-
-  - ${{ if eq(parameters.SkipDeployment, false) }}:
-    - template: ../../Install-AzModule/1.0.0.2/steps_installAzModule.yml
-      parameters:
-        ModuleVersion: '${{ parameters.AzModuleVersion }}'
-        DisplaynamePrefix: '${{ parameters.DisplaynamePrefix }}'
-        BranchName: '${{ parameters.BranchName }}'
-        Pwsh: ${{ parameters.Pwsh }}
-        # ExtraModulesToInstall: 'Az.Account'
-        
-    - task: AzureResourceManagerTemplateDeployment@3
-      displayName: '${{ parameters.DisplaynamePrefix }}ARM Template deployment ${{ parameters.DeploymentFilePath }}'
-      inputs:
-        azureResourceManagerConnection: '${{ parameters.AzureDevOpsServiceConnection }}'
-        resourceGroupName: '${{ parameters.AzureResourceGroup }}'
-        location: 'West Europe'
-        csmFile: '${{ parameters.WorkDir }}/$(deploymentFileName)'
-        csmParametersFile: '${{ parameters.DeploymentParametersFilePath }}'
-        deploymentMode: 'Incremental'
-        deploymentScope: 'Resource Group'
-        deploymentName: 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
-        deploymentOutputs: '${{ parameters.AzureDeploymentOutputVariable }}'
-        overrideParameters: '${{ parameters.OverrideDeploymentParameters }}'
-      continueOnError: true
-
-    - task: AzurePowerShell@5
-      inputs:
-        azureSubscription: ${{ parameters.AzureDevOpsServiceConnection }}
-        ScriptType: 'InlineScript'
-        azurePowerShellVersion: 'LatestVersion'
-        pwsh: false
-        Inline: |
-        
-          New-AzResourceGroupDeployment `
-            -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
-            -ResourceGroupName '${{ parameters.AzureResourceGroup }}' `
-            -TemplateFile '${{ parameters.WorkDir }}/$(deploymentFileName)' `
-            -TemplateParameterFile '${{ parameters.DeploymentParametersFilePath }}'
-
-      displayName: 'ps ${{ parameters.DisplaynamePrefix }}ARM Template deployment ${{ parameters.DeploymentFilePath }}'
-      continueOnError: true
       
+  - task: AzureResourceManagerTemplateDeployment@3
+    displayName: 'AzureResourceManagerTemplateDeployment'
+    inputs:
+      azureResourceManagerConnection: 'VSEnterprise'
+      resourceGroupName: 'rg-test-template-spec'
+      location: 'West Europe'
+      csmFile: 'main.bicep'
+      deploymentMode: 'Incremental'
+      deploymentScope: 'Resource Group'
+      deploymentName: 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
+    continueOnError: true
+
+  - task: AzurePowerShell@5
+    inputs:
+      azureSubscription: ${{ parameters.AzureDevOpsServiceConnection }}
+      ScriptType: 'InlineScript'
+      azurePowerShellVersion: 'LatestVersion'
+      pwsh: false
+      Inline: |
+      
+        New-AzResourceGroupDeployment `
+          -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
+          -ResourceGroupName 'rg-test-template-spec' `
+          -TemplateFile 'main.bicep' 
+
+    displayName: 'ps deploy'
+    continueOnError: true
+    
     - task: AzureCLI@2
       inputs:
         azureSubscription: ${{ parameters.AzureDevOpsServiceConnection }}
@@ -78,7 +53,7 @@ steps:
 
           New-AzResourceGroupDeployment `
             -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
-            -ResourceGroupName '${{ parameters.AzureResourceGroup }}' `
+            -ResourceGroupName 'rg-test-template-spec' `
             -TemplateFile '${{ parameters.WorkDir }}/$(deploymentFileName)' `
             -TemplateParameterFile '${{ parameters.DeploymentParametersFilePath }}' 
 

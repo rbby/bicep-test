@@ -2,17 +2,14 @@
 param location string = resourceGroup().location
 
 @description('The name')
-param Name string
+param Name string = 'bla${uniqueString(resourceGroup().id)}'
 
-module sa 'ts/recepies:data-storage:1.0' = {
-  name: storageAccountName
-  location: location
-  sku: {
-    name: storageAccountType
+module sa 'ts/recepies:rbby-storage:1.0' = {
+  name: Name
+  params: {
+    location: location
   }
-  kind: 'StorageV2'
-  properties: {}
 }
 
-output storageAccountName string = storageAccountName
-output storageAccountId string = sa.id
+output storageAccountName string = sa.outputs.storageAccountName
+output storageAccountId string = sa.outputs.storageAccountId

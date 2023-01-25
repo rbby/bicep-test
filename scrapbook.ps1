@@ -15,15 +15,15 @@ Get-AzResourceGroup |
   Sort-Object Location,ResourceGroupName |
     Format-Table -GroupBy Location ResourceGroupName,ProvisioningState,Tags
     
-$resourcegroupName = 'rg-test-template=spec'
+$resourcegroupName = 'rg-test-template-spec'
 Get-AzLocation | Select-Object Location
 $location = "westeurope"
-
+$name = 'rbby-storage'
 New-AzResourceGroup -Name $resourcegroupName -Location $location -Tag @{ "environment"="test" }
 
 # template specs
 $params = @{
-    Name = 'rbby-storage'
+    Name = $name
     Version = '1.0'
     Description = 'bla bla bla'
     ResourceGroupName = $resourcegroupName
@@ -31,22 +31,22 @@ $params = @{
     TemplateFile = 'storage.bicep'
 }
 Write-Output($params)
-New-AzTemplateSpec @params -Force -WhatIf
-
-
-Get-AzTemplateSpec
-$pe = Get-AzTemplateSpec -ResourceGroupName $rgIngredientsName -Name Microsoft.Network-PrivateEndpoints
-$pe.Id
-$pe = Get-AzTemplateSpec -ResourceGroupName $rgIngredientsName -Name Microsoft.Storage-StorageAccounts
-$pe.Id
-$pe = Get-AzTemplateSpec -ResourceGroupName $rgRecipesName -Name "data-storage"
-$pe.Id
-
-
+New-AzTemplateSpec @params -Force
 
 
 # Test Deploy
-New-AzSubscriptionDeployment -Location "westeurope" -TemplateFile ".\test-main.bicep"
+New-AzResourceGroupDeployment `
+  -DeploymentName 'azdo-defId_1-runId_1' `
+  -ResourceGroupName $resourcegroupName `
+  -TemplateFile 'main.bicep' 
+
+$id = (Get-AzTemplateSpec -ResourceGroupName $resourcegroupName -Name $name -Version "1.0").Versions.Id
+New-AzResourceGroupDeployment `
+  -DeploymentName 'azdo-defId_1-runId_29' `
+  -ResourceGroupName $resourcegroupName `
+  -TemplateSpecId $id
+
+
 
 # Delete
 Get-AzResourceGroup -Tag @{'environment'='test'} | Remove-AzResourceGroup -Force
