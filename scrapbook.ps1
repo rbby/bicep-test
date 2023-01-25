@@ -14,14 +14,28 @@ Clear-AzContext -Force
 Get-AzResourceGroup |
   Sort-Object Location,ResourceGroupName |
     Format-Table -GroupBy Location ResourceGroupName,ProvisioningState,Tags
+    
+$resourcegroupName = 'rg-test-template=spec'
+Get-AzLocation | Select-Object Location
+$location = "westeurope"
+
+New-AzResourceGroup -Name $resourcegroupName -Location $location -Tag @{ "environment"="test" }
+
+# template specs
+$params = @{
+    Name = 'rbby-storage'
+    Version = '1.0'
+    Description = 'bla bla bla'
+    ResourceGroupName = $resourcegroupName
+    Location = $location
+    TemplateFile = 'storage.bicep'
+}
+Write-Output($params)
+New-AzTemplateSpec @params -Force -WhatIf
 
 
-# Bicep Decompile
-$SourceFile='AzureTemplates\Microsoft.Network\PrivateEndpoints\1.1.0.0\privateEndpoints.json'
-$destinationFile='ingredients\Microsoft.Network\PrivateEndpoints\1.0\spec.bicep'
-bicep decompile $SourceFile --outfile $destinationFile
 
-# Get template specs
+
 Get-AzTemplateSpec
 $pe = Get-AzTemplateSpec -ResourceGroupName $rgIngredientsName -Name Microsoft.Network-PrivateEndpoints
 $pe.Id
