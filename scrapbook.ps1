@@ -6,7 +6,7 @@ Get-ExecutionPolicy -List
 Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 Install-Module -Name Az -Scope CurrentUser -Repository PSGallery -Force
 
-Connect-AzAccount
+Connect-AzAccount -UseDeviceAuthentication
 Get-AzSubscription
 Disconnect-AzAccount
 Clear-AzContext -Force
