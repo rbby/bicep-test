@@ -34,8 +34,6 @@ Write-Output($params)
 New-AzTemplateSpec @params -Force -WhatIf
 
 
-
-
 Get-AzTemplateSpec
 $pe = Get-AzTemplateSpec -ResourceGroupName $rgIngredientsName -Name Microsoft.Network-PrivateEndpoints
 $pe.Id
