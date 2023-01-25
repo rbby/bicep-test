@@ -95,3 +95,7 @@ $resource
 New-AzRoleAssignment -ObjectId servicePrincial.Id `
 -RoleDefinitionName $role.Name `
 -Scope $resource.ResourceId
+
+
+# Delete
+Get-AzResourceGroup -Tag @{'environment'='test'} | Remove-AzResourceGroup -Force
