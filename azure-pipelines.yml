@@ -32,7 +32,5 @@ steps:
     csmFile: 'main.bicep'
     deploymentMode: 'Incremental'
     addSpnToEnvironment:
-- task: AzurePowerShell@5
-  inputs:
-    azureSubscription: 'Visual Studio Enterprise Subscription(4d8dab80-ec9f-4a59-86d3-714d61a261a4)'
-    ScriptType: 'InlineScript'
+
+  
