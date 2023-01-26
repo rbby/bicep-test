@@ -24,7 +24,7 @@ steps:
       pwsh: false
       Inline: |
         $parameters = @{
-          Name = "tst1
+          Name = "tst1"
         }
                 
         New-AzResourceGroupDeployment `
@@ -45,7 +45,7 @@ steps:
           az deployment group create -g 'rg-test-template-spec' `
               --mode Incremental `
               --template-file '$(Build.SourcesDirectory)/main.bicep'  `
-              --name 'azcli-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
+              --name 'azcli-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
               --parameters '{ \"name\": { \"value\": \"tst2\" } }'
               
     displayName: 'az cli '
