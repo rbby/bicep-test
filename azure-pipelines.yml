@@ -23,12 +23,15 @@ steps:
       azurePowerShellVersion: 'LatestVersion'
       pwsh: false
       Inline: |
-      
+        $parameters = @{
+          Name = "tst1
+        }
+                
         New-AzResourceGroupDeployment `
           -DeploymentName 'ps-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
           -ResourceGroupName 'rg-test-template-spec' `
           -TemplateFile '$(Build.SourcesDirectory)/main.bicep' 
-
+          -TemplateParameterObject $parameters
     displayName: 'ps deploy'
     continueOnError: true
     
@@ -39,12 +42,12 @@ steps:
       scriptLocation: inlineScript
       inlineScript: |
 
-          Write-Host("Deploy")
           az deployment group create -g 'rg-test-template-spec' `
               --mode Incremental `
               --template-file '$(Build.SourcesDirectory)/main.bicep'  `
               --name 'azcli-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
-
+              --parameters '{ \"name\": { \"value\": \"tst2\" } }'
+              
     displayName: 'az cli '
     continueOnError: true
 
