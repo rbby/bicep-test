@@ -30,7 +30,7 @@ steps:
         New-AzResourceGroupDeployment `
           -DeploymentName 'ps-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
           -ResourceGroupName 'rg-test-template-spec' `
-          -TemplateFile '$(Build.SourcesDirectory)/main.bicep' 
+          -TemplateFile '$(Build.SourcesDirectory)/main.bicep' `
           -TemplateParameterObject $parameters
     displayName: 'ps deploy'
     continueOnError: true
