@@ -25,7 +25,7 @@ steps:
       Inline: |
       
         New-AzResourceGroupDeployment `
-          -DeploymentName 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
+          -DeploymentName 'ps-defId_$(System.DefinitionId)-runId_$(Build.BuildId)' `
           -ResourceGroupName 'rg-test-template-spec' `
           -TemplateFile '$(Build.SourcesDirectory)/main.bicep' 
 
@@ -43,7 +43,7 @@ steps:
           az deployment group create -g 'rg-test-template-spec' `
               --mode Incremental `
               --template-file '$(Build.SourcesDirectory)/main.bicep'  `
-              --name 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
+              --name 'azcli-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
 
     displayName: 'az cli '
     continueOnError: true
@@ -57,6 +57,6 @@ steps:
       csmFile: 'main.bicep'
       deploymentMode: 'Incremental'
       deploymentScope: 'Resource Group'
-      deploymentName: 'azdo-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
+      deploymentName: 'armdeploy-defId_$(System.DefinitionId)-runId_$(Build.BuildId)'
     continueOnError: true
   
